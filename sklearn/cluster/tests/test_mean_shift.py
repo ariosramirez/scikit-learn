@@ -52,18 +52,24 @@ def test_estimate_bandwidth_1sample():
 )
 def test_mean_shift(bandwidth, cluster_all, expected, first_cluster_label):
     # Test MeanShift algorithm
-    ms = MeanShift(bandwidth=bandwidth, cluster_all=cluster_all)
-    labels = ms.fit(X).labels_
-    labels_unique = np.unique(labels)
-    n_clusters_ = len(labels_unique)
-    assert n_clusters_ == expected
-    assert labels_unique[0] == first_cluster_label
+    bandwidth = 1.2
+    implemented_kernels = ['flat', 'rbf', 'epanechnikov', 'biweight']
+    for kernel in implemented_kernels:
+        ms = MeanShift(bandwidth=bandwidth, cluster_all=cluster_all,
+                       kernel=kernel)
+        labels = ms.fit(X).labels_
+        labels_unique = np.unique(labels)
+        n_clusters_ = len(labels_unique)
+        assert n_clusters_ == expected
+        assert labels_unique[0] == first_cluster_label
 
-    cluster_centers, labels_mean_shift = mean_shift(X, cluster_all=cluster_all)
-    labels_mean_shift_unique = np.unique(labels_mean_shift)
-    n_clusters_mean_shift = len(labels_mean_shift_unique)
-    assert n_clusters_mean_shift == expected
-    assert labels_mean_shift_unique[0] == first_cluster_label
+        cluster_centers, labels_mean_shift = mean_shift(X,
+                                                        cluster_all=cluster_all,
+                                                        kernel=kernel)
+        labels_mean_shift_unique = np.unique(labels_mean_shift)
+        n_clusters_mean_shift = len(labels_mean_shift_unique)
+        assert n_clusters_mean_shift == expected
+        assert labels_mean_shift_unique[0] == first_cluster_label
 
 
 def test_mean_shift_negative_bandwidth():
